@@ -22,8 +22,8 @@ class _MainMenuState extends State<MainMenu> {
   final String currentVersion = "1.0.2"; 
   
   // === 2. رابط ملف الإصدار (تأكد من تغيير USERNAME باسم حسابك) ===
-  final String versionUrl = "https://raw.githubusercontent.com/USERNAME/ar_mouse/main/version.json";
-
+  final String versionUrl = "https://raw.githubusercontent.com/madeenomr/ar_mouse/main/version.json";
+  
   @override
   void initState() {
     super.initState();
