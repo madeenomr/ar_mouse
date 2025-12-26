@@ -1,0 +1,16 @@
+name: ar_mouse
+description: تطبيق الماوس العربي الذكي
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.2.0  # هذه الأداة هي التي ستفحص التحديثات
+  url_launcher: ^6.2.0 # لفتح رابط التحميل
+  cupertino_icons: ^1.0.2
+
+flutter:
+  uses-material-design: true
