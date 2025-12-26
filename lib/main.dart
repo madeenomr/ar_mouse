@@ -18,19 +18,19 @@ class MainMenu extends StatefulWidget {
 }
 
 class _MainMenuState extends State<MainMenu> {
-  // === هذا هو المتغير الذي ستغيره يدوياً في كل تحديث ===
-  final String currentVersion = "1.0.0"; 
+  // === 1. رقم الإصدار الحالي (عدله يدوياً عند كل تحديث) ===
+  final String currentVersion = "1.0.2"; 
   
-  // === رابط ملف الإصدار (غير USERNAME باسمك في GitHub) ===
+  // === 2. رابط ملف الإصدار (تأكد من تغيير USERNAME باسم حسابك) ===
   final String versionUrl = "https://raw.githubusercontent.com/USERNAME/ar_mouse/main/version.json";
 
   @override
   void initState() {
     super.initState();
-    checkForUpdates(); // تشغيل الرادار عند فتح التطبيق
+    checkForUpdates(); // تشغيل الرادار
   }
 
-  // === دالة الرادار: تفحص هل يوجد تحديث ===
+  // دالة فحص التحديثات
   Future<void> checkForUpdates() async {
     try {
       final response = await http.get(Uri.parse(versionUrl));
@@ -39,23 +39,24 @@ class _MainMenuState extends State<MainMenu> {
         String serverVersion = data['version'];
         String downloadUrl = data['url'];
 
-        // إذا كان الإصدار في الموقع أحدث من التطبيق
+        // مقارنة الإصدارات
         if (serverVersion != currentVersion) {
           showUpdateDialog(downloadUrl);
         }
       }
     } catch (e) {
-      print("فشل التحقق من التحديث: $e");
+      print("خطأ في التحقق من التحديث: $e");
     }
   }
 
-  // === نافذة التنبيه بالتحديث ===
+  // نافذة التنبيه
   void showUpdateDialog(String url) {
     showDialog(
       context: context,
+      barrierDismissible: false, // يمنع إغلاق النافذة بالضغط خارجها
       builder: (context) => AlertDialog(
         title: const Text("تحديث جديد متوفر! 🚀"),
-        content: const Text("توجد نسخة جديدة ومحسنة من التطبيق. هل تريد تحميلها؟"),
+        content: const Text("تم إضافة ميزات جديدة وتحسين النصوص. هل تريد التحديث الآن؟"),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -65,6 +66,7 @@ class _MainMenuState extends State<MainMenu> {
             onPressed: () {
               launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
             },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
             child: const Text("تحديث الآن"),
           ),
         ],
@@ -75,59 +77,86 @@ class _MainMenuState extends State<MainMenu> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100], // لون خلفية هادئ
       appBar: AppBar(
-        title: const Text("لوحة التحكم"),
+        title: const Text("الماوس العربي", style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
         backgroundColor: Colors.teal,
+        foregroundColor: Colors.white,
       ),
-      // === هنا يبدأ تصميمك يا مبرمج ===
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              "مرحباً بك في مشروعك الجديد",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 30),
-            
-            // مثال لزر القائمة (يمكنك تكراره وتغيير الأيقونات)
-            _buildMenuButton(Icons.mouse, "الماوس", () {
-              // هنا سننتقل لصفحة الماوس
-            }),
-            
-            const SizedBox(height: 20),
-            
-            _buildMenuButton(Icons.keyboard, "لوحة المفاتيح", () {
-              // هنا سننتقل لصفحة الكيبورد
-            }),
-            
-             const SizedBox(height: 20),
-            
-             _buildMenuButton(Icons.ondemand_video, "التحكم بالوسائط", () {
-              // صفحة الوسائط
-            }),
-          ],
+        child: SingleChildScrollView( // يسمح بالتمرير إذا كثرت الأزرار
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // === النصوص الترحيبية ===
+              const Icon(Icons.touch_app, size: 80, color: Colors.teal),
+              const SizedBox(height: 20),
+              
+              const Text(
+                "السلام عليكم يا مدير النظام!",
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
+              ),
+              
+              Text(
+                "الإصدار الحالي: $currentVersion",
+                style: const TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+              
+              const SizedBox(height: 40),
+              
+              // === قائمة الأزرار ===
+              
+              // زر الماوس
+              _buildMenuButton(Icons.mouse, "الماوس الذكي", () {
+                // هنا سنضع كود الانتقال لصفحة الماوس
+              }),
+              
+              const SizedBox(height: 15),
+              
+              // زر لوحة المفاتيح
+              _buildMenuButton(Icons.keyboard, "لوحة المفاتيح", () {
+                 // هنا سنضع كود الانتقال لصفحة الكيبورد
+              }),
+              
+              const SizedBox(height: 15),
+              
+              // زر الوسائط (الجديد)
+              _buildMenuButton(Icons.ondemand_video, "التحكم بالوسائط", () {
+                 // هنا سنضع كود الانتقال لصفحة الوسائط
+              }),
+              
+              // === مساحة لإضافة أزرار جديدة مستقبلاً ===
+              
+            ],
+          ),
         ),
       ),
     );
   }
 
-  // === دالة مساعدة لصنع زر جميل ===
+  // تصميم الزر الموحد
   Widget _buildMenuButton(IconData icon, String label, VoidCallback onTap) {
-    return SizedBox(
-      width: 250,
+    return Container(
+      width: 280,
       height: 60,
-      child: ElevatedButton.icon(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(color: Colors.black12, blurRadius: 5, offset: const Offset(0, 3)),
+        ],
+      ),
+      child: MaterialButton(
         onPressed: onTap,
-        icon: Icon(icon, size: 28),
-        label: Text(label, style: const TextStyle(fontSize: 18)),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.teal,
-          elevation: 5,
-          alignment: Alignment.centerRight, // محاذاة لليمين لأننا عرب
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end, // الأيقونة والنص لليمين
+          children: [
+            Text(label, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.teal)),
+            const SizedBox(width: 15),
+            Icon(icon, color: Colors.teal, size: 30),
+          ],
         ),
       ),
     );
